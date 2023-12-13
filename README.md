@@ -1,6 +1,6 @@
 # Serverless QR Code Generator
 
-mw-qrcode.netlify.app
+[mw-qrcode.netlify.app](https://mw-qrcode.netlify.app)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/0c53510c-8a5b-460f-a70f-65796e87ca5a/deploy-status)](https://app.netlify.com/sites/creative-bublanina-ffd1e1/deploys)
 
