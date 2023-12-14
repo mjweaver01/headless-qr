@@ -1,7 +1,5 @@
-import QRCode from "qrcode";
-
-const QR_VERSION = 4; // QR version, range 1-40
-const DEFAULT_TYPE = "svg";
+import JsBarcode from "jsbarcode";
+import { DOMImplementation, XMLSerializer } from 'xmldom';
 
 const origins = {
   "Access-Control-Allow-Origin": "*", // Required for CORS support to work
@@ -20,26 +18,29 @@ export async function handler(event) {
       event?.queryStringParameters?.text ??
       event?.body?.split("text=")[1] ??
       "";
-    const type =
-      event?.queryStringParameters?.type ??
-      event?.body?.split("type=")[1] ??
-      DEFAULT_TYPE;
-    const version =
-      event?.queryStringParameters?.version ??
-      event?.body?.version ??
-      QR_VERSION;
 
-    const generated = await QRCode.toString(text, { type, version });
+    const xmlSerializer = new XMLSerializer();
+    const document = new DOMImplementation().createDocument('http://www.w3.org/1999/xhtml', 'html', null);
+    const svgNode = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+    JsBarcode(svgNode, text, {
+      xmlDocument: document,
+    });
+    
+    const svgText = xmlSerializer.serializeToString(svgNode);
+    
     const response = {
       statusCode: 200,
       headers: {
-        "Content-Type": mimeTypes[type],
+        "Content-Type": mimeTypes['svg'],
         ...origins,
       },
-      body: JSON.stringify(generated),
+      body: JSON.stringify(svgText),
     };
     return response;
   } catch (error) {
+    console.log(error)
+
     const response = {
       statusCode: 500,
       headers: {

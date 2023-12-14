@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Barcode Generator</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <h1>Barcode Generator</h1>
+      <p>
+        You can POST to <code>/.netlify/functions/barcode</code> endpoint with
+        <code>text</code> (string) in the body, <strong>or</strong> GET using a
+        <code>text</code> query param
+      </p>
+      <form onsubmit="formSubmit">
+        <label for="text">Text</label>
+        <input type="text" id="text" name="text" />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </body>
+
+  <script>
+    const app = document.getElementById("app");
+    const fetchData = (text) =>
+      fetch(`/.netlify/functions/barcode?text=${text}`)
+        .then((res) => res.json())
+        .then((data) => {
+          try {
+            if (data) {
+              const div = document.createElement("div");
+              div.innerHTML = data;
+              app.appendChild(div);
+            }
+          } catch (e) {
+            console.log(e);
+          }
+        });
+
+    if (window.location.search.split("=")[1])
+      fetchData(window.location.search.split("=")[1]);
+  </script>
+</html>
